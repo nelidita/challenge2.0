@@ -1,4 +1,4 @@
-# ![](./src/assets/rocket-mini.svg) Challenge 2.0
+# Challenge 2.0
 
 Es una UI web, para subir una lista de contactos de un archivo CSV a un API y no perder ningun dato.
 
