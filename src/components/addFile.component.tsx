@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   FileUpload,
   FileUploadSelectEvent,
   ItemTemplateOptions,
 } from "primereact/fileupload";
 import { Tag } from "primereact/tag";
+import { Toast } from "primereact/toast";
 import { postItems } from "../services/Contacts.service";
 import TableComponent from "./table.component";
 import Add from "../assets/add.svg";
@@ -17,6 +18,7 @@ type AddFileProps = {
 export const AddFile = ({ setLoading }: AddFileProps): JSX.Element => {
   const [dataFile, setDataFile] = useState<Contact[]>([]);
   const [file, setFile] = useState<File>();
+  const toast = useRef<Toast>(null);
   const onClear = () => setDataFile([]);
 
   const handleChange = (e: FileUploadSelectEvent) => {
@@ -64,7 +66,24 @@ export const AddFile = ({ setLoading }: AddFileProps): JSX.Element => {
   ): Promise<PostContact | undefined> => {
     setLoading(true);
     if (arrayItems.length > 0) {
-      await postItems(arrayItems[0]);
+      await postItems(arrayItems[0])
+        .then(() =>
+          toast.current?.show({
+            severity: "success",
+            summary: "Success",
+            detail: "El archivo fue procesado correctamente",
+            life: 3000,
+          })
+        )
+        .catch(() => {
+          toast.current?.show({
+            severity: "error",
+            summary: "Error",
+            detail: "Ha ocurrido un error, por favor intentelo de nuevo",
+            life: 3000,
+          });
+          throw new Error();
+        });
       arrayItems.shift();
       return submitItems(arrayItems);
     }
@@ -78,6 +97,7 @@ export const AddFile = ({ setLoading }: AddFileProps): JSX.Element => {
         <img src={Add} alt="add" />
       </figure>
       <span>Arrastra y suelta el archivo aquí</span>
+      <small>Solo se permiten archivos csv</small>
     </section>
   );
 
@@ -115,11 +135,12 @@ export const AddFile = ({ setLoading }: AddFileProps): JSX.Element => {
 
   return (
     <div className="flex flex-col items-center gap-y-4 w-full">
+      <Toast ref={toast}></Toast>
       <FileUpload
-        accept="File/*"
+        accept="csv/*"
         className="w-full"
         headerClassName="flex justify-around"
-        maxFileSize={1000000}
+        maxFileSize={10000000}
         onSelect={handleChange}
         customUpload
         uploadHandler={handleUploadClick}

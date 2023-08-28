@@ -17,16 +17,20 @@ export const ContactList = () => {
       .finally(() => setLoading(false));
   }, [loadingUpdate]);
 
-  return loading && loadingUpdate ? (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <figure>
-        <img src={Loading} alt="loading" />
-      </figure>
-    </div>
-  ) : (
-    <div className="grid grid-cols-1 gap-y-6 justify-items-center w-4/6 p-6 mt-10 h-fit rounded-3xl shadow-lg border bg-white">
-      <AddFile setLoading={setLoadingUpdate} />
-      {items?.length > 0 && <DataViewComponent items={items} />}
+  return (
+    <div className="w-full h-full flex justify-center">
+      {loading && loadingUpdate ? (
+        <div className="h-full w-full flex justify-center items-center">
+          <figure>
+            <img src={Loading} alt="loading" />
+          </figure>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-y-6 justify-items-center w-4/6 p-6 h-fit rounded-3xl shadow-lg border bg-white">
+          <AddFile setLoading={setLoadingUpdate} />
+          {items?.length > 0 && <DataViewComponent items={items} />}
+        </div>
+      )}
     </div>
   );
 };

@@ -6,12 +6,18 @@ export const getItems = async (): Promise<ContactList> => {
   return await axios
     .get(baseURL)
     .then((res) => res.data)
-    .catch((error) => console.error(error));
+    .catch((error) => {
+      console.error(error);
+      throw new Error();
+    });
 };
 
 export const postItems = async (payload: Contact): Promise<PostContact> => {
   return await axios
     .post(baseURL, payload)
     .then((res) => res.data)
-    .catch((error) => console.error(error));
+    .catch((error) => {
+      console.error(error);
+      throw new Error();
+    });
 };

@@ -16,7 +16,13 @@
 
 body {
   margin: 0;
-  width: 100vw;
-  height: 100vh;
   font-family: "Montserrat", sans-serif;
+}
+
+.p-panel .p-panel-footer {
+  padding: 0;
+}
+
+.p-panel .p-panel-content {
+  background-color: #ffffff00;
 }

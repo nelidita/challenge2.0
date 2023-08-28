@@ -5,6 +5,7 @@ export default {
     extend: {
       backgroundImage: {
         burst: "url('/src/assets/burst.svg')",
+        footer: "url('/src/assets/footer.jpg')",
       },
     },
   },
