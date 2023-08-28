@@ -1,27 +1,78 @@
-# React + TypeScript + Vite
+# ![](./src/assets/rocket.svg) Challenge 2.0
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Es una UI web, para subir una lista de contactos de un archivo CSV a un API y no perder ningun dato.
 
-Currently, two official plugins are available:
+## Detalles
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Posee un input tipo file, para ingresar el archivo CSV.
+- El archivo debe poseer los siguientes datos:
 
-## Expanding the ESLint configuration
+  - Nombre
+  - Teléfono
+  - Correo electrónico
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Previsualización de datos del archivo.
+- Un botón que permite cargar los datos del csv al api (POST).
+- Un botón que permite eliminar el archivo subido, en caso de error.
+- Visualización de los datos subidos al servidor (GET).
+- Header.
+- Footer.
 
-- Configure the top-level `parserOptions` property like this:
+## Dificultades
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+- En un principio extraer los datos del archivo, lo cual solucioné usando
+
+```javascript
+const reader = new FileReader();
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Organizar los datos, a la estructura requerida para el POST, que es un JSON de la siguiente forma:
+
+```javascript
+{
+  name: string;
+  email: string;
+  phone: string;
+}
+```
+
+- Y por último, se debe enviar un POST por cada usuario a la vez, al terminar un POST hacer el siguiente porque arroja el error: Servidor No disponible. Para ello implementé un función recursiva, para que hiciera un POST y luego que termine ejecutara el que sigue, hasta terminar con el último usuario.
+
+```javascript
+const submitItems = async (
+  arrayItems: Contact[]
+): Promise<PostContact | undefined> => {
+  setLoading(true);
+  if (arrayItems.length > 0) {
+    await postItems(arrayItems[0])
+      .then(() =>
+        toast.current?.show({
+          severity: "success",
+          summary: "Success",
+          detail: "El archivo fue procesado correctamente",
+          life: 3000,
+        })
+      )
+      .catch(() => {
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Ha ocurrido un error, por favor intentelo de nuevo",
+          life: 3000,
+        });
+        throw new Error();
+      });
+    arrayItems.shift();
+    return submitItems(arrayItems);
+  }
+  setLoading(false);
+  return;
+};
+```
+
+## Correr el proyecto
+
+```shell
+npm i
+npm run dev
+```
